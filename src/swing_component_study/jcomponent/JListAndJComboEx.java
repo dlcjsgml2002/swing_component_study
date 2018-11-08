@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -22,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.JComboBox;
 
 public class JListAndJComboEx extends JFrame implements ActionListener {
 
@@ -29,12 +31,28 @@ public class JListAndJComboEx extends JFrame implements ActionListener {
 	private JTextField tfName;
 	private JList<String> listJListName;
 	private List<String> listArrayListNames;
+	private String imgPath;
+	private JComboBox<String> comboBox;
+	private JLabel lblImg;
+	private ImageIcon[] imgIcons;
 
 	public JListAndJComboEx() {
+		imgPath = System.getProperty("user.dir") + "\\images\\";
+		
 		listArrayListNames = new ArrayList<>();
 		listArrayListNames.add("김보민");
 		listArrayListNames.add("황경수");
 		listArrayListNames.add("우선미");
+		
+		imgIcons = new ImageIcon[] {
+				new ImageIcon(imgPath + "lyu.jpg"),
+				new ImageIcon(imgPath + "\\fruits\\apple.jpg"),
+				new ImageIcon(imgPath + "\\fruits\\banana.jpg"),
+				new ImageIcon(imgPath + "\\fruits\\kiwi.jpg"),
+				new ImageIcon(imgPath + "\\fruits\\mango.jpg")
+		};
+		
+		
 		
 		initComponents();
 	}
@@ -97,10 +115,60 @@ public class JListAndJComboEx extends JFrame implements ActionListener {
 		JPanel pJCombo = new JPanel();
 		pJCombo.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "JComboBox", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		contentPane.add(pJCombo);
+		pJCombo.setLayout(new GridLayout(0, 2, 10, 0));
+		
+		JPanel subPjcombo1 = new JPanel();
+		pJCombo.add(subPjcombo1);
+		
+		String[] strArr1 = {"apple", "banana", "charrry"};
+		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(strArr1);
+		JComboBox<String> cmb1 = new JComboBox<>(model);
+		subPjcombo1.add(cmb1);
+		
+		String[] strArr2 = {"김보민", "우선미", "황경수", "이준민"};
+		JComboBox<String> cmb2 = new JComboBox<>();
+		
+		for(int i=0; i<strArr2.length; i++) {
+			cmb2.addItem(strArr2[i]);
+		}
+		
+		cmb2.setSelectedIndex(-1);
+
+		cmb2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String name = (String) cmb2.getSelectedItem();
+				int index = cmb2.getSelectedIndex();
+				JOptionPane.showMessageDialog(null, index + "번째 선택된 이름 " + name);
+				
+			}
+		});
+		
+		subPjcombo1.add(cmb2);
+		
+		
+		JPanel subPjcombo2 = new JPanel();
+		pJCombo.add(subPjcombo2);
+		subPjcombo2.setLayout(new GridLayout(0, 2, 10, 0));
+		
+		JPanel pCmbImg = new JPanel();
+		subPjcombo2.add(pCmbImg);
+		
+		String[] strNames = {"이유영", "사과", "바나나", "키위", "망고"};
+		DefaultComboBoxModel<String> nameModel = new DefaultComboBoxModel<>(strNames);
+		comboBox = new JComboBox<>(nameModel);
+
+		comboBox.setSelectedIndex(-1);
+		pCmbImg.add(comboBox);
+		
+		lblImg = new JLabel();
+		subPjcombo2.add(lblImg);
+		
+		comboBox.addActionListener(this);
 	}
 
 	private ImageIcon[] getImgIcons() {
-		String imgPath = System.getProperty("user.dir") + "\\images\\";
+		
 		ImageIcon[] icons = new ImageIcon[] {
 				new ImageIcon(imgPath + "icon1.png"),
 				new ImageIcon(imgPath + "icon2.png"),
@@ -115,6 +183,9 @@ public class JListAndJComboEx extends JFrame implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == comboBox) {
+			do_comboBox_actionPerformed(e);
+		}
 		if (e.getSource() == tfName) {
 			do_tfName_actionPerformed(e);
 		}
@@ -124,5 +195,10 @@ public class JListAndJComboEx extends JFrame implements ActionListener {
 		listJListName.setListData(new Vector<>(listArrayListNames));
 		tfName.setText("");
 		tfName.requestFocus();
+	}
+	
+	protected void do_comboBox_actionPerformed(ActionEvent e) {
+		int index = comboBox.getSelectedIndex();
+		lblImg.setIcon(imgIcons[index]);
 	}
 }
